@@ -325,7 +325,7 @@ Now all we need to do is to cast the body of the request into our class and if t
         return this.bookService.saveBook(dto);
     }
 ```
-Any additional data will be ignored
+Any additional data will be ignored because we made whitelist as true
 
 ## Jest Testing
 Jest Is the cummenly used with nest
