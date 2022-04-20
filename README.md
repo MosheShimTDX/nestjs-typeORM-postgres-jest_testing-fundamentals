@@ -304,7 +304,7 @@ $ npx jest --config ../jest-e2e.json
 If you want to run a specific test file from the the folder you can add the prefix of the file
 $ npx jest --config ../jest-e2e.json book-tests
 
-#### Unit Testing
+#### Unit / integration Testing
 ```
 describe('BookControllerTest', () => {  // The main function, there may be multiple of these
   let bookController: BookController;
@@ -330,4 +330,17 @@ describe('BookControllerTest', () => {  // The main function, there may be multi
   it("should be defined", () => {
     expect(bookController).toBeDefined();
   });
+  ```
+  
+  To mock a repository its a we will do the same
+  ```
+  .overrideProvider(AuthorRepository) // The provider to mock
+  .useValue(mockBookRepository) // the mock to use
+  ```
+  
+  When using @InjectRepository the mocking is a bit different
+  
+  ```
+  .override(getRepositoryToken(Book)) // The provider to mock
+  .useValue(mockBookRepository) // the mock to use
   ```
