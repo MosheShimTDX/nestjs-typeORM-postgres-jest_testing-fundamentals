@@ -271,3 +271,37 @@ await this.bookRepository
       .getOne();
 
 ```
+
+## Jest Testing
+Jest Is the cummenly used with nest
+We are going to learn how to
+*unit testing
+*integration testing
+*end to end test
+*mock functions
+*using a testing db
+
+####
+Running the tests
+When running 
+$ npm run test
+Only test that are in the src folder will run.
+To change it and run tests from a different folder you can configure a json file a json that will tell what tests to run
+```
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  }
+}
+```
+And now you can run the all the tests in the rootDir that end with .spec.ts
+$ npx jest --config ../jest-e2e.json
+
+If you want to run a specific test file from the the folder you can add the prefix of the file
+$ npx jest --config ../jest-e2e.json book-tests
+
+#### Unit Testing
