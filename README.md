@@ -306,27 +306,22 @@ $ npx jest --config ../jest-e2e.json book-tests
 
 #### Unit Testing
 ```
-describe('BookControllerTest', () => {  // The 
+describe('BookControllerTest', () => {  // The main function, there may be multiple of these
   let bookController: BookController;
 
-  const mockBookService = {
+  const mockBookService = { // This object will be used instead of the original one (AKA the mock)
     postBook: jest.fn((body:any) => {
       return body;
     })
   };
 
-  const body = {
-
-  }
-
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-
+    const app: TestingModule = await Test.createTestingModule({ 
       controllers: [BookController],
       providers: [BookService],
     })
-      .overrideProvider(BookService)
-      .useValue(mockBookService)
+      .overrideProvider(BookService) // the service to mock
+      .useValue(mockBookService) // the mock to use instead of the service
       .compile();
 
     bookController = app.get<BookController>(BookController);
