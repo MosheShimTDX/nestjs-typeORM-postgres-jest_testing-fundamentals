@@ -272,7 +272,60 @@ await this.bookRepository
 
 ```
 
-@
+## Nest Pipes
+For Validation nest we use pipes, its works with express in the easiest way possible, all we need is to add to main.ts one line 
+```
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe()); // Add this
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+Now if we want that any variable that is not in our class to be ignored in the middleware (like if someone added 'role':'ADMIN' in the json and it's not in a part of our class) we can add whitelist to the 'useGlobalPipes'
+```
+app.useGlobalPipes( // Adding middleware validation
+    new ValidationPipe({
+      whitelist: true, // Ignores any additional json properties
+    }),
+  );
+```
+Now all is left to do is create a dto and decide what do we want to allow
+```
+
+export class BookDto {
+// id does not have any decorator because is not possible to be added by the user
+  id: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  genre: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @Max(999)
+  price: number;
+
+  @IsNumber()
+  @IsOptional() 
+  author?: number = null;
+
+```
+Now all we need to do is to cast the body of the request into our class and if the body is not validated an error will be thrown
+```
+ @Post()
+    async postBook(@Body() dto: BookDto): Promise<Book>{
+        return this.bookService.saveBook(dto);
+    }
+```
+Any additional data will be ignored
 
 ## Jest Testing
 Jest Is the cummenly used with nest
