@@ -243,3 +243,31 @@ export class BookService {
   ) {}
   }
 ```
+
+#### Interacting with the repository
+```
+ async getAll(): Promise<Book[]> {
+    return this.booksRepository.find();
+  }
+  
+
+  async saveBook(dto: BookDto): Promise<Book> {
+    const book = new Book(dto.name, dto.genre, dto.price, author);
+    return await this.booksRepository.save(book);
+  }
+  
+  async findByName(firstName: string):Promise<Book> {
+        return this.findOne({ name: firstName });
+    }
+
+```
+Notice that we return a promise of Book
+
+We can create custom query also
+```
+await this.bookRepository
+      .createQueryBuilder('book')
+      .where('book.id = :id', { id: 1 })
+      .getOne();
+
+```
