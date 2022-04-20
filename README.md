@@ -305,3 +305,34 @@ If you want to run a specific test file from the the folder you can add the pref
 $ npx jest --config ../jest-e2e.json book-tests
 
 #### Unit Testing
+```
+describe('BookControllerTest', () => {  // The 
+  let bookController: BookController;
+
+  const mockBookService = {
+    postBook: jest.fn((body:any) => {
+      return body;
+    })
+  };
+
+  const body = {
+
+  }
+
+  beforeEach(async () => {
+    const app: TestingModule = await Test.createTestingModule({
+
+      controllers: [BookController],
+      providers: [BookService],
+    })
+      .overrideProvider(BookService)
+      .useValue(mockBookService)
+      .compile();
+
+    bookController = app.get<BookController>(BookController);
+  });
+
+  it("should be defined", () => {
+    expect(bookController).toBeDefined();
+  });
+  ```
