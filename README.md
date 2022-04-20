@@ -2,7 +2,7 @@
 ## Getting started with nestjs, typeORM, postgres(dokcer), jest testing
 A simple nestjs server that uses postgres and typeORM.
 
-## Postgres on docker
+### Postgres on docker
 Create an image for postgres
 
 $ docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres
@@ -11,7 +11,7 @@ After running your image create a server using your CLI or favorite GUI
 
 If you notice that your server doesn't work because is cannot connect to localhost or the port, try to restart your computer and run the container first thing when the computer loads
 
-## Dependencies
+### Dependencies
 For this project, I will use npm as my package provider
 There are the dependencies that I'm going to use and I will explain more about them later on
 
@@ -24,7 +24,7 @@ $ npm install --save @nestjs/typeorm typeorm pg
 nestjs pipes:
 $ npm u --save class-validator class-transformer
 
-## Run the server
+### Run the server
 (make sure that you are in the folder)
 $ npm start
 or you can run it in watch mode (automaticly deploy changes and re run the server)
@@ -154,8 +154,92 @@ Inside that file you will write all your configurations for the server
   "password": "somePassword",
   "database": "postgres",
   "entities": ["dist/**/*.entity{.ts,.js}"], // Where the compiled entities will be
-  "synchronize": true // Will automatically update the database schema, Not recommended at all to use in production, in production migration file should be used
+  "synchronize": true, // Will automatically update the database schema, Not recommended at all to use in production, in production migration file should be used
+  //
+ dropSchema: true, // Deletes all the data every time
 }
 ```
 
-# Notice that when you move files around the typeorm may not sync and you will need to delete the dist folder and restart the server. This will create new dist folder and create the files with the right imports
+###### Notice that when you move files around the typeorm may not sync and you will need to delete the dist folder and restart the server. This will create new dist folder and create the files with the right imports
+
+Now we want to start and use the connections, we will put the connection in app.module so it will be available to the whole app
+```
+@Module({
+  imports: [TypeOrmModule.forRoot(), BookModule, AuthorModule], //TypeOrmModule.forRoot find ormconfig.json automatically and uses the configurations for connecting to the db server
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+That's it! You are now connected (If you did everything right).
+
+##### Creating entities
+
+A simple entity looks like that
+```
+@Entity() //Represents an db entity
+export class Book {
+  @PrimaryGeneratedColumn() //auto increments id
+  id: number;
+
+  @Column('varchar', { length: 100, nullable: false })
+  name: string;
+
+  @Column('varchar', { length: 100, nullable: false })
+  genre: string;
+
+  @Column('decimal', { nullable: false })
+  price: number;
+
+```
+
+Instead of auto-incrementing you can use other decorators like
+  //@PrimaryGeneratedColumn("uuid") / @Generated("uuid")(you need to mark this as @PrimartColumn if you want it to be a primary key)
+  //@PrimaryColumn() And add id programmably
+  
+Now typeORM will create a table with the columns as defined
+
+#### Repository
+For running queries or simple crus functions you have a few ways to do it. First you can use entity manager but I wont cover it here because there is simpler way that work for most of the time. 
+
+###### Injecting the repository class direclty
+```
+@Injectable()
+export class BookService {
+  constructor(
+    @InjectRepository(Book)
+    private usersRepository: Repository<Book>,
+  ) {}
+  }
+```
+
+This is very convidient but what if we want to use the same repository in different services with custom functions(queries) that we made or use a repository pattern for our application?
+For this we need to create a custom repository 
+
+Lets create a repository class
+```
+@EntityRepository(Book) // Custom repository
+export class BooksRepository extends Repository<Book>{
+}
+```
+
+And now import it in our module as a typeORM feature
+```
+@Module({
+  imports: [TypeOrmModule.forFeature([BooksRepository])],
+  controllers: [BookController],
+  providers: [BookService],
+})
+export class BookModule {}
+```
+
+Now we can use it in the service like this:
+```
+@Injectable()
+export class BookService {
+  constructor(
+    private readonly booksRepository: BooksRepository, //Injecting a custom repository for the entity
+  ) {}
+  }
+```
