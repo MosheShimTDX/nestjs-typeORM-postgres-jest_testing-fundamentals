@@ -344,3 +344,66 @@ describe('BookControllerTest', () => {  // The main function, there may be multi
   .override(getRepositoryToken(Book)) // The provider to mock
   .useValue(mockBookRepository) // the mock to use
   ```
+
+#### End 2 End Testing
+In end to end testing, we need to start the app but also use a testing server, this is a bit more complicated but not hard at all
+
+You can mock the app module and then get access to all the modules
+```
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule], // This will use the prod database because we haven't configured anything else
+    })
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    //middleware goes to here
+    await app.init();
+  });
+```
+You can mock other modules
+```
+ beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AuthorModule], // mocking the author module
+    })
+      .compile();
+```
+
+If we want to mock the database we need to make a new database for mocking, you can use a different port but I just add another database to the server with a different name
+```
+ beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        // Connecting to the tesing db
+        TypeOrmModule.forRoot({
+          type: 'postgres',
+          host: 'localhost',
+          port: 5432,
+          username: 'postgres',
+          password: 'somePassword',
+          database: 'postgres-test',
+          entities: ['src/**/*.entity{.ts,.js}'], // The production connection is to '/dist' and not to '/src'
+          synchronize: true,
+          dropSchema: true, // Deletes all the data every time its making new connection
+        }),
+        AuthorModule,
+      ],
+    })
+      .compile();
+```
+
+Now we can test restful requests easily
+```
+   it('/author (GET)',  () => {
+      console.log('second test');
+      return request(app.getHttpServer()).get('/author').expect(200).expect([]);
+    });
+
+   it('/author (GET)', () => { // The name of the test ('/author (GET)')
+     return request(app.getHttpServer())
+       .get('/author')
+       .expect(200)
+       .expect([author]);
+   });
+```
