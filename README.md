@@ -2,7 +2,7 @@
 ## Getting started with nestjs, typeORM, postgres(dokcer), jest testing
 A simple nestjs server that uses postgres and typeORM.
 
-### Postgres on docker
+## Postgres on docker
 Create an image for postgres
 
 $ docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres
@@ -11,7 +11,7 @@ After running your image create a server using your CLI or favorite GUI
 
 If you notice that your server doesn't work because is cannot connect to localhost or the port, try to restart your computer and run the container first thing when the computer loads
 
-### Dependencies
+## Dependencies
 For this project, I will use npm as my package provider
 There are the dependencies that I'm going to use and I will explain more about them later on
 
@@ -35,7 +35,7 @@ If you installed everything you should be able to send a GET request to localhos
 ## Nestjs workflow and pattern
 First is important to know that nest is dependent on 'express'. Express is a server framework for node, there will a lot of use in express.
 
-## Modules
+### Modules
 
 The nest framework is divided into modules. every module contains its providers (usually services), controllers, and other imports that the module needs like other modules or classes. The module that was created at first is the app module. in this module, you will import all the other smaller modules and other global imports like typeORM connection.
 
@@ -60,7 +60,7 @@ And for other modules (BookModule) we will import other modules, providers and c
 export class BookModule {}
 ```
 
-## Controllers
+### Controllers
 
 Controllers are the api gateway, they handle the endpoints. Usually, the controllers won't do any business logic, they may use other classes for authenticating the request or validating the body but not containing the business logic inside of them. 
 
@@ -116,7 +116,7 @@ async create(@Body() createCatDto: CreateCatDto) {
   return 'This action adds a new cat';
 }
 ```
-## Services/Providers
+### Services/Providers
 Services are where the fun part begins, here most of the business logic and magic happens
 
 First, we need to mark a class as injectable
