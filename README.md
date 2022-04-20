@@ -35,21 +35,23 @@ If you installed every thing you should be able to send a GET request to localho
 ## Nestjs workflow and pattern
 First is importent to know that nest is depended on 'express'. Express is a server framework for node, there will a lot of use in express.
 
-Modules-
+## Modules
 
 The nest framework is devided to modules. every module contains its providers (usually services), controllers and other imports that the module needs like other modules or classes. The module that was created at first is the app module. in this module you will import all the other smaller modules and other global imports like typeORM connection.
 
 The module will be decorated with @Module and the imports will be inside the decorator
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), BookModule, AuthorModule], //TypeOrmModule.forRoot find ormconfig.json automatically and uses the configurations for connecting to the db server
+//TypeOrmModule.forRoot find ormconfig.json automatically and uses the configurations for connecting to the db server
+  imports: [TypeOrmModule.forRoot(), BookModule, AuthorModule], 
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
 
 
-Controllers-
+
+## Controllers
 
 Controllers are the api gateway, they handle the end points. Usually the controllers wont do any buisness logic, they may use other classes for authentication the request or validating the body but not containing the buisness logic inside of them. 
 
@@ -67,6 +69,8 @@ export class AppController {
 
 In the constructor you inject the providers you want to use #explaination later
 
+
+
 The response will be configured autometicly, it will decide if its string or json and what status it is.
 You can configure it like that
 
@@ -74,5 +78,32 @@ You can configure it like that
 @HttpCode(204)
 @Header('Cache-Control', 'none')
 create() {
+  return 'This action adds a new cat';
+}
+
+
+To get a url param you will write it like this
+
+@Get(':id')
+findOne(@Param('id') id: string): string {
+  return `This action returns a #${id} cat`;
+}
+
+
+You can get the requset like this
+
+@Controller('cats')
+export class CatsController {
+  @Get()
+  findAll(@Req() request: Request): string {
+    return 'This action returns all cats';
+  }
+}
+
+
+Or if you want just the body
+
+@Post()
+async create(@Body() createCatDto: CreateCatDto) {
   return 'This action adds a new cat';
 }
