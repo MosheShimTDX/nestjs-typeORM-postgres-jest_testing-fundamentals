@@ -40,7 +40,7 @@ First is importent to know that nest is depended on 'express'. Express is a serv
 The nest framework is devided to modules. every module contains its providers (usually services), controllers and other imports that the module needs like other modules or classes. The module that was created at first is the app module. in this module you will import all the other smaller modules and other global imports like typeORM connection.
 
 The module will be decorated with @Module and the imports will be inside the decorator
-
+```
 @Module({
 //TypeOrmModule.forRoot find ormconfig.json automatically and uses the configurations for connecting to the db server
   imports: [TypeOrmModule.forRoot(), BookModule, AuthorModule], 
@@ -48,7 +48,7 @@ The module will be decorated with @Module and the imports will be inside the dec
   providers: [AppService],
 })
 export class AppModule {}
-
+```
 
 
 ## Controllers
@@ -56,7 +56,7 @@ export class AppModule {}
 Controllers are the api gateway, they handle the end points. Usually the controllers wont do any buisness logic, they may use other classes for authentication the request or validating the body but not containing the buisness logic inside of them. 
 
 In the beginning of the class a @Controller is needed. Inside of the decorator you can put a prefix for all the functions.
-
+```
 @Controller('prefix')
 export class AppController {
   constructor(private readonly appService: AppService) {} // Injecting the service
@@ -66,32 +66,32 @@ export class AppController {
     return this.appService.getHello();
   }
 }
-
+```
 In the constructor you inject the providers you want to use #explaination later
 
 
 
 The response will be configured autometicly, it will decide if its string or json and what status it is.
 You can configure it like that
-
+```
 @Post()
 @HttpCode(204)
 @Header('Cache-Control', 'none')
 create() {
   return 'This action adds a new cat';
 }
-
+```
 
 To get a url param you will write it like this
-
+```
 @Get(':id')
 findOne(@Param('id') id: string): string {
   return `This action returns a #${id} cat`;
 }
-
+```
 
 You can get the requset like this
-
+```
 @Controller('cats')
 export class CatsController {
   @Get()
@@ -99,11 +99,12 @@ export class CatsController {
     return 'This action returns all cats';
   }
 }
-
+```
 
 Or if you want just the body
-
+```
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
   return 'This action adds a new cat';
 }
+```
