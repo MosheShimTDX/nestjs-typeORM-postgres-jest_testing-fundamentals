@@ -50,6 +50,15 @@ The module will be decorated with @Module and the imports will be inside the dec
 export class AppModule {}
 ```
 
+And for other modules (BookModule) we will import other modules, provider and controllers
+```
+@Module({
+  imports: [TypeOrmModule.forFeature([BooksRepository, AuthorRepository])],
+  controllers: [BookController],
+  providers: [BookService],
+})
+export class BookModule {}
+```
 
 ## Controllers
 
@@ -106,5 +115,28 @@ Or if you want just the body
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
   return 'This action adds a new cat';
+}
+```
+## Services/Providers
+Services is where the fun part begins, here most of the buisness logic and magic happens
+
+First we need to mark a class as injectable
+
+```
+@Injectable()
+export class AppService {
+  getHello(): string {
+    // business logic here
+    return 'Hello World!';
+  }
+}
+```
+
+If you want to put a constructor parameter in the service which is optional it can be dont like this
+
+```
+@Injectable()
+export class HttpService<T> {
+  constructor(@Optional() @Inject('HTTP_OPTIONS') private httpClient: T) {}
 }
 ```
