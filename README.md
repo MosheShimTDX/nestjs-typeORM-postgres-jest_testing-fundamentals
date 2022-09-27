@@ -143,7 +143,7 @@ export class HttpService<T> {
 ## TypeORM
 After seeing how nest works, we can connect it to a database with typeORM.
 
-First create a filt names ormconfig.json in root folder.
+First create a file names ormconfig.json in root folder.
 Inside that file you will write all your configurations for the server
 ```
 {
